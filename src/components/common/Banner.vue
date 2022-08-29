@@ -1,13 +1,7 @@
 <template>
   <el-carousel height="720px" :interval="3000" arrow="always">
-    <el-carousel-item>
-      <img src="/static/image/banner1.jpg" alt="">
-    </el-carousel-item>
-    <el-carousel-item>
-      <img src="/static/image/banner1.jpg" alt="">
-    </el-carousel-item>
-    <el-carousel-item>
-      <img src="/static/image/banner1.jpg" alt="">
+    <el-carousel-item v-for="item in images">
+      <img :src=item alt="">
     </el-carousel-item>
   </el-carousel>
 </template>
@@ -15,6 +9,12 @@
 <script>
     export default {
         name: "Banner",
+
+        data(){
+          return{
+            images: ["/static/image/banner1.jpg","/static/image/banner1.jpg","/static/image/banner1.jpg"]
+          }
+        }
     }
 </script>
 
