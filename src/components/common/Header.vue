@@ -3,7 +3,7 @@
       <div class="header">
         <div class="content">
           <div class="logo full-left">
-            <router-link to="/"><img src="/static/image/logo.svg" alt=""></router-link>
+            <router-link to="/"><img src="/static/image/head-logo.svg" alt=""></router-link>
           </div>
           <ul class="nav full-left">
               <li><span>免费课</span></li>
@@ -127,5 +127,11 @@
 }
 .header .login-bar .login-box span:hover{
   color: #000000;
+}
+.header .logo img{
+    width: 118px;
+    height: auto;
+    cursor: pointer;
+    margin-right: 50px;
 }
 </style>

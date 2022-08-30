@@ -1,7 +1,7 @@
 <template>
   <el-carousel height="720px" :interval="3000" arrow="always">
-    <el-carousel-item v-for="item in images">
-      <img :src=item alt="">
+    <el-carousel-item v-for="item,key in banner_list" :key="key">
+      <a :href="item.link"><img :src="item.image_url"></a>
     </el-carousel-item>
   </el-carousel>
 </template>
@@ -12,9 +12,23 @@
 
         data(){
           return{
-            images: ["/static/image/banner1.jpg","/static/image/banner1.jpg","/static/image/banner1.jpg"]
+            banner_list: []
           }
-        }
+        },
+        created(){
+          this.get_banner_list();
+        },
+        methods: {
+          // 获取轮播图列表
+          get_banner_list(){
+            this.$axios.get(`${this.$settings.HOST}/banners/`,{}).then(response=>{
+              this.banner_list = response.data;
+              console.log(response.data);
+            }).catch(error=>{
+              console.log(error.response);
+            })
+          }
+        },
     }
 </script>
 
@@ -33,5 +47,8 @@
 
   .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
+  }
+  .el-carousel__item img{
+    margin-left: calc(50% - 1920px/2);
   }
 </style>
