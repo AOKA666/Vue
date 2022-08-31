@@ -17,7 +17,7 @@
 					<div id="geetest1"></div>
 					<div class="rember">
 						<p>
-							<input type="checkbox" class="no" name="a"/>
+							<input v-model="remember" type="checkbox" class="no" name="a"/>
 							<span>记住密码</span>
 						</p>
 						<p>忘记密码</p>
@@ -55,12 +55,31 @@ export default {
         username: this.username, password: this.password
       }).then(response => {
         // console.log(response.data.access);
-        let jwt = _require("jsonwebtoken");
+        let jwt = require("jsonwebtoken");
         let token = jwt.decode(response.data.access)
-
         console.log(token);
+        if (this.remember) {
+          // 记住登录
+          sessionStorage.clear();
+          localStorage.token = response.data.access;
+          localStorage.id = token.user_id;
+          localStorage.username = token.username;
+        } else {
+          // 未记住登录
+          localStorage.clear();
+          sessionStorage.token = response.data.access;
+          sessionStorage.id = token.user_id;
+          sessionStorage.username = token.username;
+        }
+        // 页面跳转
+        let self = this;
+        this.$alert("登录成功!","路飞学城",{
+            callback(){
+                self.$router.push("/");
+            }
+        });
       }).catch(error => {
-        console.log(error.response)
+        this.$message.error("对不起，登录失败！请确认密码或账号是否正确！");
       })
     }
   },
