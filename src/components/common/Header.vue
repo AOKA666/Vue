@@ -13,7 +13,7 @@
         </ul>
         <div v-if="token" class="login-bar full-right">
             <div class="shop-cart full-left">
-              
+
               <img src="/static/image/cart.svg" alt="">
               <span><router-link to="/cart">购物车</router-link></span>
             </div>
@@ -39,7 +39,7 @@
             <div class="login-box full-left">
               <router-link to="/user/login">登录</router-link>
               &nbsp;|&nbsp;
-              <span>注册</span>
+              <router-link to="/user/register">注册</router-link>
             </div>
           </div>
       </div>
@@ -217,7 +217,7 @@
   line-height: 32px;
   text-align: center;
 }
-    
+
 .member{
     display: inline-block;
     height: 34px;

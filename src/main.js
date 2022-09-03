@@ -8,6 +8,7 @@ import reset from "../static/css/reset.css"
 import axios from 'axios'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import '../static/js/gt.js'
 
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings
