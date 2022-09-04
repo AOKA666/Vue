@@ -8,6 +8,7 @@
 					<input v-model = "mobile" type="text" placeholder="手机号码" class="user">
 					<div id="geetest"></div>
 					<input v-model = "sms" type="text" placeholder="输入验证码" class="user">
+          <span class="acquire-code" @click="send_sms()">获取验证码</span>
 					<button class="register_btn" >注册</button>
 					<p class="go_login" >已有账号 <router-link to="/user/login">直接登录</router-link></p>
 				</div>
@@ -28,7 +29,29 @@ export default {
   },
   created(){
   },
-  methods:{},
+  methods:{
+    send_sms(){
+      let self = this;
+      this.$axios.get(`${this.$settings.HOST}/user/send/sms/`, {
+          params:{username:this.mobile}
+        }
+      ).then(response=>{
+        if (response.data.status){
+            self.$notify({
+            title: '成功',
+            message: '短信发送成功',
+            type: 'success'
+          });
+        }
+      }).catch(error=>{
+        self.$notify.error({
+          title: '错误',
+          message: error.response.data.msg
+        });
+      })
+    },
+
+  },
 
 };
 </script>
@@ -48,7 +71,6 @@ export default {
 	position: absolute;
 	width: 500px;
 	height: 400px;
-	top: 0;
 	left: 0;
   margin: auto;
   right: 0;
@@ -106,7 +128,6 @@ export default {
 	margin: 0 auto;
 }
 .inp input{
-    border: 0;
     outline: 0;
     width: 100%;
     height: 45px;
@@ -187,4 +208,12 @@ export default {
     color: #84cc39;
     cursor: pointer;
 }
+  .acquire-code{
+    position: absolute;
+    top: 187px;
+    right: 90px;
+    border-left: 2px solid #ffc210;
+    padding-left: 10px;
+    cursor: pointer;
+  }
 </style>

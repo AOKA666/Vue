@@ -23,14 +23,14 @@
             <p>忘记密码</p>
           </div>
           <button class="login_btn" @click="check_geetest">登录</button>
-          <p class="go_login">没有账号 <span>立即注册</span></p>
+          <p class="go_login">没有账号 <router-link to="/user/register">立即注册</router-link></p>
         </div>
         <div class="inp" v-show="login_type==1">
           <input v-model="username" type="text" placeholder="手机号码" class="user">
           <input v-model="password" type="text" class="pwd" placeholder="短信验证码">
           <button id="get_code">获取验证码</button>
           <button class="login_btn" @click="check_geetest">登录</button>
-          <p class="go_login">没有账号 <span>立即注册</span></p>
+          <p class="go_login">没有账号 <router-link to="/user/register">立即注册</router-link></p>
         </div>
       </div>
     </div>
@@ -50,7 +50,7 @@
     },
 
     methods: {
-      login_handler() {
+      login_handler(captchaObj) {
         this.$axios.post(`${this.$settings.HOST}/user/api/token/`, {
           username: this.username, password: this.password
         }).then(response => {
@@ -80,6 +80,7 @@
           });
         }).catch(error => {
           this.$message.error("对不起，登录失败！请确认密码或账号是否正确！");
+          captchaObj.reset();
         })
       },
 
@@ -87,13 +88,19 @@
         this.$axios.get(`${this.$settings.HOST}/user/geetest/`,{
           params:{username:this.username}
         }).then(response=>{
-            console.log(response);
+            let init = response.data;
+            console.log(init);
+            console.log(typeof (init))
+            let data = JSON.parse(response.data);
+            console.log(data);
+            console.log(typeof (data));
             initGeetest({
               // 以下配置参数来自服务端 SDK
-              gt: response.gt,
-              challenge: response.challenge,
-              offline: !response.success,
-              new_captcha: true
+              gt: data.gt,
+              challenge: data.challenge,
+              offline: !data.success,
+              new_captcha: true,
+              width: "100%"
             }, this.handlerPopup)
           }
         ).catch(error=>{
@@ -107,14 +114,15 @@
         captchaObj.onSuccess(function () {
             var validate = captchaObj.getValidate();
             // 当用户拖动验证码正确以后，发送请求给后端
-            self.$axios.post(`${self.$settings.HOST}/user/captcha/`,{
+            self.$axios.post(`${self.$settings.HOST}/user/geetest/`,{
                 geetest_challenge: validate.geetest_challenge,
                 geetest_validate: validate.geetest_validate,
                 geetest_seccode: validate.geetest_seccode
             }).then(response=>{
+                console.log(response);
                 if(response.data.status){
                     // 验证码通过以后，才发送账号和密码进行登录！
-                    self.loginHander();
+                    self.login_handler(captchaObj);
                 }
             }).catch(error=>{
                console.log(error.response);
@@ -122,6 +130,7 @@
         });
 
         // 将验证码加到id为captcha的元素里
+        document.getElementById("geetest1").innerHTML = '';
         captchaObj.appendTo("#geetest1");
     }
     },
@@ -268,7 +277,7 @@
 
   }
 
-  #geetest {
+  #geetest1 {
     margin-top: 20px;
   }
 
