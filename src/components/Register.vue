@@ -5,11 +5,11 @@
 			<div class="register_box">
         <div class="register-title">注册路飞学城</div>
 				<div class="inp">
-					<input v-model = "mobile" type="text" placeholder="手机号码" class="user">
+					<input v-model = "telephone" type="text" placeholder="手机号码" class="user">
 					<div id="geetest"></div>
 					<input v-model = "sms" type="text" placeholder="输入验证码" class="user">
-          <span class="acquire-code" @click="send_sms()">获取验证码</span>
-					<button class="register_btn" >注册</button>
+          <span class="acquire-code" :class="inactive" @click="send_sms()">{{ sms_text }}</span>
+					<button class="register_btn" @click="registerHandler()">注册</button>
 					<p class="go_login" >已有账号 <router-link to="/user/login">直接登录</router-link></p>
 				</div>
 			</div>
@@ -22,9 +22,11 @@ export default {
   name: 'Register',
   data(){
     return {
-        sms:"",
-        mobile:"",
-        validateResult:false,
+        sms: "",
+        telephone: "",
+        is_sent_sms: false,
+        sms_text: "获取验证码",
+        inactive: ""
     }
   },
   created(){
@@ -32,24 +34,85 @@ export default {
   methods:{
     send_sms(){
       let self = this;
+      if(! /1[3-9]\d{9}/.test(this.telephone)){
+          this.$message.error("手机号码格式不正确！");
+          return false;
+      }
+      if (this.is_sent_sms){
+        this.$message.error("60秒内无需重复发送！");
+        return false;
+      }
       this.$axios.get(`${this.$settings.HOST}/user/send/sms/`, {
-          params:{username:this.mobile}
+          params:{telephone:this.telephone}
         }
       ).then(response=>{
         if (response.data.status){
-            self.$notify({
+          this.$notify({
             title: '成功',
-            message: '短信发送成功',
+            message: '短信已发送',
             type: 'success'
           });
+          this.is_sent_sms = true;
+          let interval_time = 60;
+          let self = this;
+          let timer = setInterval(function(){            
+            if(interval_time<1){
+              clearInterval(timer);
+              self.inactive = "";
+              self.sms_text = "获取验证码"
+              self.is_sent_sms = false;
+            }else{
+              interval_time--;
+              self.inactive = "inactive";
+              self.sms_text = `${interval_time}秒后重新获取`;
+            }                       
+          }, 1000)
+            
         }
       }).catch(error=>{
+        console.log(error);
         self.$notify.error({
           title: '错误',
           message: error.response.data.msg
         });
       })
     },
+
+    registerHandler(){
+      if (!this.telephone){
+        this.$message.error('请输入手机号！');
+        return false;
+      }
+      if (!this.sms){
+        this.$message.error('请输入验证码！');
+        return false;
+      }
+      this.$axios.post(`${this.$settings.HOST}/user/register/`,{
+        telephone: this.telephone,
+        sms: this.sms
+      }).then(response=>{
+        console.log(response.data);
+        // let jwt = require("jsonwebtoken");
+        // let token = jwt.decode(response.data.data.access)
+        // sessionStorage.clear();
+        localStorage.token = response.data.data.access.access; // what the f**k is this
+        localStorage.id = response.data.data.id;
+        localStorage.username = response.data.data.username;
+        // 页面跳转
+        let self = this;
+          this.$alert("登录成功!", "路飞学城", {
+            callback() {
+              self.$router.push("/");
+            }
+          });
+      }).catch(error=>{
+        console.log(error.response);
+        this.$notify.error({
+          title: '错误',
+          message: error.response.data.msg.non_field_errors[0]
+        });
+      })
+    }
 
   },
 
@@ -215,5 +278,11 @@ export default {
     border-left: 2px solid #ffc210;
     padding-left: 10px;
     cursor: pointer;
+    width: 120px;
+    text-align: center;
+  }
+  .acquire-code.inactive{
+    color:#999;
+    cursor: default;
   }
 </style>

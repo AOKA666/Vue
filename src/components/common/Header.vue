@@ -20,14 +20,14 @@
             <div class="login-box login-box1 full-left">
               <router-link to="">学习中心</router-link>
               <el-menu width="200" class="member el-menu-demo" mode="horizontal">
-                  <el-submenu index="2">
-                    <template slot="title"><img src="/static/image/logo@2x.png" alt=""></template>
-                    <el-menu-item index="2-1">我的账户</el-menu-item>
-                    <el-menu-item index="2-2">我的订单</el-menu-item>
-                    <el-menu-item index="2-3">我的优惠卷</el-menu-item>
-                    <el-menu-item index="2-3"><span @click="logout">退出登录</span></el-menu-item>
-                  </el-submenu>
-                </el-menu>
+                <el-submenu index="2">
+                  <template slot="title"><img src="/static/image/logo@2x.png" alt=""></template>
+                  <el-menu-item index="2-1">我的账户</el-menu-item>
+                  <el-menu-item index="2-2">我的订单</el-menu-item>
+                  <el-menu-item index="2-3">我的优惠卷</el-menu-item>
+                  <el-menu-item index="2-3"><span @click="logout">退出登录</span></el-menu-item>
+                </el-submenu>
+              </el-menu>
             </div>
           </div>
 

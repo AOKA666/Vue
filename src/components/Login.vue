@@ -88,12 +88,7 @@
         this.$axios.get(`${this.$settings.HOST}/user/geetest/`,{
           params:{username:this.username}
         }).then(response=>{
-            let init = response.data;
-            console.log(init);
-            console.log(typeof (init))
             let data = JSON.parse(response.data);
-            console.log(data);
-            console.log(typeof (data));
             initGeetest({
               // 以下配置参数来自服务端 SDK
               gt: data.gt,
